@@ -1,4 +1,7 @@
 # find sum of top 3 elves
+# this solution is O(n) because it hard codes the shifting logic to replace the 
+# top 3 elements as new largest elements are found. A generic top k solution would
+# need to use a max-heap or something similar and would have a running time of O(nlogn)
 
 def main():
     with open('input.txt') as f:
