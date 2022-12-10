@@ -50,16 +50,17 @@ def main():
         print(sum(sizes.values()))
         print(sizes)
 
-def calculate_sizes(node, sizes):
+def calculate_sizes(node, sizes, prefix=''):
     size = 0
+    prefix += node.name
     for item in node.children.values():
         if item.item_type == 'file':
             size += item.val
         elif item.item_type == 'dir':
-            size += calculate_sizes(item, sizes)
-    print(f'size of dir {node.name} = {size}')
+            size += calculate_sizes(item, sizes, node.name if node.name == '/' else prefix + '/')
+    print(f'size of dir {prefix} = {size}')
     if size <= 100000:
-        sizes[node.name] = size
+        sizes[prefix] = size
 
     return size
 
