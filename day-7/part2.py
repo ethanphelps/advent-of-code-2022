@@ -43,12 +43,34 @@ def main():
         # iterate over children, recursing down the tree if there's a dir, adding to this node's sum if there's a file
         # print(root.children)
 
+        max_space = 70000000
+        print(f'total memory: {max_space}')
+
         sizes = {}
         total_size = calculate_sizes(root, sizes)
-        print(f'total size: {total_size}')
-        # print(sizes)
-        print(sum(sizes.values()))
-        print(sizes)
+        print(f'used memory: {total_size}')
+
+        remaining_space = max_space - total_size
+        print(f'remaining space: {remaining_space}')
+        space_to_delete = 30000000 - remaining_space
+        print(f'amount of memory to delete: {space_to_delete}')
+
+        smallest = find_smallest_to_delete(root, space_to_delete, max_space)
+        print(smallest)
+
+
+
+# each dir has val set to its size, so iterate in DFS manner to find min
+def find_smallest_to_delete(node, space_to_delete, smallest=70000000):
+    for item in node.children.values():
+        if item.item_type == 'dir':
+            subtree_min = find_smallest_to_delete(item, space_to_delete, smallest)
+            if subtree_min >= space_to_delete:
+                smallest = min(subtree_min, smallest)
+    if node.val >= space_to_delete:
+        smallest = min(smallest, node.val)
+    return smallest
+
 
 def calculate_sizes(node, sizes, prefix=''):
     size = 0
@@ -56,10 +78,11 @@ def calculate_sizes(node, sizes, prefix=''):
     for item in node.children.values():
         if item.item_type == 'file':
             size += item.val
-        # recursively find size of directories
         elif item.item_type == 'dir':
-            size += calculate_sizes(item, sizes, node.name if node.name == '/' else prefix + '/')
-    print(f'size of dir {prefix} = {size}')
+            dir_size = calculate_sizes(item, sizes, node.name if node.name == '/' else prefix + '/') 
+            item.val = dir_size
+            size += dir_size
+    # print(f'size of dir {prefix} = {size}')
     if size <= 100000:
         sizes[prefix] = size
 
