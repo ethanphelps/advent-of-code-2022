@@ -36,7 +36,7 @@ def modified_next_greater_right(arr):
     for i, num in enumerate(arr):
         while len(stack) > 0 and arr[stack[-1]] <= num:
             index = stack.pop()
-            res[index] = i
+            res[index] = i  # setting value to i instead of num
         stack.append(i)
     return res
             
@@ -47,7 +47,7 @@ def modified_next_greater_left(arr):
     for i, num in reversed(list(enumerate(arr))):
         while len(stack) > 0 and arr[stack[-1]] <= num:
             index = stack.pop()
-            res[index] = i
+            res[index] = i  # setting value to i instead of num
         stack.append(i)
     return res
 
@@ -57,18 +57,12 @@ def part1():
         # turn lines of input into 2d array of integer heights
         forest = list(map(lambda l: l.strip(), f.readlines()))
         forest = [[int(c) for c in row] for row in forest]
-        inverted_forest = invert(forest)
-
-        # print(forest)
-        # print(inverted_forest)
-        w = len(forest[0])
-        h = len(forest)
-        print(f'{w}, {h}')
+        transposed_forest = transpose(forest)
 
         blocking_trees_right = [next_greater_right(row) for row in forest]
         blocking_trees_left = [next_greater_left(row) for row in forest]
-        blocking_trees_above = invert([next_greater_left(row) for row in inverted_forest])
-        blocking_trees_below = invert([next_greater_right(row) for row in inverted_forest])
+        blocking_trees_above = transpose([next_greater_left(row) for row in transposed_forest])
+        blocking_trees_below = transpose([next_greater_right(row) for row in transposed_forest])
 
         visible_trees = {}
         for i, row in enumerate(forest):
@@ -80,7 +74,6 @@ def part1():
                     ):
                     visible_trees[f'{i},{j}'] = forest[i][j]
 
-        # print(visible_trees)
         print(len(visible_trees))
 
 def part2():
@@ -88,15 +81,15 @@ def part2():
         # turn lines of input into 2d array of integer heights
         forest = list(map(lambda l: l.strip(), f.readlines()))
         forest = [[int(c) for c in row] for row in forest]
-        inverted_forest = invert(forest)
+        transposed_forest = transpose(forest)
         w = len(forest[0])
         h = len(forest)
 
         # blocking trees 2d arrays now have index of blocking tree from given direction instead of its height
         blocking_trees_right = [modified_next_greater_right(row) for row in forest]
         blocking_trees_left = [modified_next_greater_left(row) for row in forest]
-        blocking_trees_above = invert([modified_next_greater_left(row) for row in inverted_forest])
-        blocking_trees_below = invert([modified_next_greater_right(row) for row in inverted_forest])
+        blocking_trees_above = transpose([modified_next_greater_left(row) for row in transposed_forest])
+        blocking_trees_below = transpose([modified_next_greater_right(row) for row in transposed_forest])
 
         highest_dist = 0
         for i, row in enumerate(forest):
@@ -112,8 +105,8 @@ def part2():
         print(highest_dist)
 
 
-# inverts a rectangular 2d list (aka matrix)
-def invert(mat):
+# transposes a rectangular 2d list
+def transpose(mat):
     res = []
     w = len(mat[0])
     h = len(mat)
@@ -137,14 +130,14 @@ def main():
     #     forest = list(map(lambda l: l.strip(), f.readlines()))
     #     for i, row in enumerate(forest):
     #         forest[i] = [int(c) for c in row]
-    #     inverted_forest = invert(forest)
+    #     transposed_forest = invert(forest)
     #     print(forest)
-    #     # print(inverted_forest)
+    #     # print(transposed_forest)
 
     #     blocking_trees_right = [next_greater_right(row) for row in forest]
     #     blocking_trees_left = [next_greater_left(row) for row in forest]
-    #     blocking_trees_above = invert([next_greater_left(row) for row in inverted_forest])
-    #     blocking_trees_below = invert([next_greater_right(row) for row in inverted_forest])
+    #     blocking_trees_above = invert([next_greater_left(row) for row in transposed_forest])
+    #     blocking_trees_below = invert([next_greater_right(row) for row in transposed_forest])
 
     #     print(blocking_trees_left)
     #     print(blocking_trees_right)
