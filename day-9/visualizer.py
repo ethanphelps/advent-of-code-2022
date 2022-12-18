@@ -1,9 +1,10 @@
 import math
+from colors import *
+from tkinter import *
+from tkinter import ttk
 
 LENGTH = 10
 rope = [(0,0) for i in range(LENGTH)]
-# rope = [(-3,3), (-2,2), (-1,1), (0,0)]
-# print(rope)
 dirs = {
     'R': (1, 0),
     'L': (-1, 0),
@@ -12,34 +13,14 @@ dirs = {
 }
 
 def main():
-    with open('example2.txt') as f:
-        positions = set([rope[-1]]) # keep track of unique positions the tail enters
-        # print(positions)
+    window = Tk()
+    window.title('Rope Simulation')
+    window.maxsize(1000, 700)
+    window.config(bg = dark_bg)
+    
 
-        for instr in f.readlines():
-            instr = instr.strip().split()
-            direction = instr[0]
-            distance = int(instr[1])
-            # print(f'direction: {direction}, distance: {distance}')
 
-            # split instruction into 1-move increments
-            for i in range(distance):
-                # move the head
-                rope[0] = (rope[0][0] + dirs[direction][0], rope[0][1] + dirs[direction][1])
-                # update rest of rope
-                update_next(0, 1)
-                print(rope)
-            positions.add(rope[-1])
-
-            # print(rope[-1])
-            # print(f'tail: {tail}')
-
-        # print(positions)
-        print(rope)
-        print(positions)
-        print(len(positions))
-
-        # todo: visualize with tkinter
+    window.mainloop()
 
 
 # updated, next are indices of previously updated and next rope knots
