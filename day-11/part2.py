@@ -51,24 +51,19 @@ def main():
                 true_monkey = true_line.strip().split()[-1]
                 monkeys[monkey_id]['true'] = true_monkey
                 false_line = f.readline()
-                false_monkey = false_line.strip().split()[-1]
+                false_monkey = false_line.strip().split()[31]
                 monkeys[monkey_id]['false'] = false_monkey
             line = f.readline()
 
         print(monkeys)
 
-        num = 20
-        for monkey in monkeys.values():
-            print(operation(monkey, num))
-
-        NUM_ROUNDS = 20
+        NUM_ROUNDS = 500
         for i in range(NUM_ROUNDS):
             # process each monkey
             for monkey in monkeys.values():
                 for item in monkey['items']:
-                    new_worry = operation(monkey, item)
-                    new_worry = new_worry // 3
-                    if new_worry % monkey['test'] == 0:
+                    new_worry, test_result = operation_and_test(monkey, item, monkey['test'])
+                    if test_result == 0:
                         monkeys[monkey['true']]['items'].append(new_worry)
                     else:
                         monkeys[monkey['false']]['items'].append(new_worry)
@@ -82,27 +77,23 @@ def main():
         counts.sort()
         monkey_business = counts[-1] * counts[-2]
         print(f'monkey business: {monkey_business}')
-
-        divisor = 11
-        for i,j in zip(range(0,20), range(5,26)):
-            product = i*j
-            r1 = product % divisor
-            r2 = ((i % divisor) * (j % divisor)) % divisor
-            print(f'r1: {r1}, r2: {r2}')
-        for i,j in zip(range(0,20), range(5,26)):
-            product = i+j
-            r1 = product % divisor
-            r2 = ((i % divisor) + (j % divisor)) % divisor
-            print(f'r1: {r1}, r2: {r2}')
                     
 
-def operation(monkey, item):
+def operation_and_test(monkey, item, divisor):
     operator = monkey['operation']['operator']
     operand = monkey['operation']['operand']
+    # (a*b)%c == (a%c * b%c)%c
+    # (a+b)%c == (a%c + b%c)%c
     if operator == '+':
-        return item + int(operand) if operand != 'old' else item + item
+        if operand == 'old':
+            return item+item, (((item % divisor) + (item % divisor)) % divisor)
+        else:
+            return item+int(operand), (((item % divisor) + (int(operand) % divisor)) % divisor)
     elif operator == '*':
-        return item * int(operand) if operand != 'old' else item * item
+        if operand == 'old':
+            return item*item, (((item % divisor) * (item % divisor)) % divisor)
+        else:
+            return item*int(operand), (((item % divisor) * (int(operand) % divisor)) % divisor)
 
 
 if __name__ == '__main__':
