@@ -1,5 +1,5 @@
 def main():
-    with open('example.txt') as f:
+    with open('input.txt') as f:
         # parse file contents into appropriate objects
         # then run the 'rounds'
         monkeys = {}
@@ -14,6 +14,7 @@ def main():
                     'test': None,
                     'true': None,
                     'false': None,
+                    'count': 0
                 }
 
                 # get items
@@ -66,16 +67,39 @@ def main():
             # print(monkey['test'](num))
             print(operation(monkey, num))
 
+        NUM_ROUNDS = 10000
+        for i in range(NUM_ROUNDS):
+            # process each monkey
+            for monkey in monkeys.values():
+                for item in monkey['items']:
+                    new_worry = operation(monkey, item)
+                    new_worry = new_worry // 3
+                    if new_worry % monkey['test'] == 0:
+                        monkeys[monkey['true']]['items'].append(new_worry)
+                    else:
+                        monkeys[monkey['false']]['items'].append(new_worry)
+                    monkey['count'] += 1
+                monkey['items'] = []
+        
+        # TODO: keep track of how many items each monkey has inspected
+        counts = []
+        for monkey in monkeys.values():
+            counts.append(monkey['count'])
+        counts.sort()
+        monkey_business = counts[-1] * counts[-2]
+        print(f'monkey business: {monkey_business}')
+                    
+
 def operation(monkey, item):
     operator = monkey['operation']['operator']
     operand = monkey['operation']['operand']
     # operand = int(op[-1]) if op[-1] != 'old' else 'old'
     if operator == '+':
-        print('operator is +')
+        # print('operator is +')
         return item + int(operand) if operand != 'old' else item + item
         # monkeys[monkey_id]['operation'] = (lambda x: x + x) if self_operation else (lambda x: x + operand)
     elif operator == '*':
-        print('operator is *')
+        # print('operator is *')
         return item * int(operand) if operand != 'old' else item * item
         # monkeys[monkey_id]['operation'] = (lambda x: x * x) if self_operation else (lambda x: x * operand)
 
